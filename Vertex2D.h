@@ -1,9 +1,9 @@
 #ifndef VERTEX2D_H
 #define VERTEX2D_H
 
-#include <GL/gl.h>
+#include "Drawable.h"
 
-class Vertex2D {
+class Vertex2D : Drawable {
     GLuint x, y;
 public:
     Vertex2D(GLuint x, GLuint y);
@@ -14,7 +14,7 @@ public:
 
     GLuint getY() const;
 
-    bool draw();
+    bool draw() override;
 };
 
 #endif //VERTEX2D_H
