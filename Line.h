@@ -16,7 +16,7 @@ public:
      * @brief Rasterize line using Bresenham's midpoint algorithm
      * @return Success
      */
-    bool fillPoints();
+    std::vector<Vertex2D> fillPoints();
 
     bool draw() override;
 };

@@ -26,7 +26,7 @@ public:
      * @brief Rasterize circle using midpoint algorithm
      * @return Success
      */
-    bool fillPoints();
+    std::vector<Vertex2D> fillPoints();
 
     bool draw() override;
 

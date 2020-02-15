@@ -18,7 +18,7 @@ void Circle::drawSymmetricPoints(const int x, const int y) {
     });
 }
 
-bool Circle::fillPoints() {
+std::vector<Vertex2D> Circle::fillPoints() {
     int x = 0, y = radius;
     int d = 1 - (int)y;
     int deltaE = 3;
@@ -38,12 +38,12 @@ bool Circle::fillPoints() {
         x++;
         drawSymmetricPoints(x, y);
     }
-    return true;
+    return points;
 }
 
 bool Circle::draw() {
-    if (points.empty() and !fillPoints()) {
-        return false;
+    if (points.empty()) {
+        fillPoints();
     }
     glBegin(GL_POINTS);
     for (const auto &point : points) {

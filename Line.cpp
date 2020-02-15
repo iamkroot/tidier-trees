@@ -4,7 +4,7 @@ Line::Line(const Vertex2D &start, const Vertex2D &end) : start(start), end(end) 
 
 Line::~Line() = default;
 
-bool Line::fillPoints() {
+std::vector<Vertex2D> Line::fillPoints() {
     Vertex2D _start = start, _end = end;
     int dx = (int) _end.getX() - (int) _start.getX();
     if (dx < 0) {  // handle cases for left half of the plane
@@ -62,12 +62,12 @@ bool Line::fillPoints() {
             y += 2 * !neg - 1;
         points.emplace_back(x, y);
     }
-    return true;
+    return points;
 }
 
 bool Line::draw() {
-    if (points.empty() && !fillPoints()) {
-        return false;
+    if (points.empty()) {
+        fillPoints();
     }
     glBegin(GL_POINTS);
     for (const auto &point : points) {
