@@ -1,6 +1,5 @@
 #include "Line.h"
 
-
 Line::Line(const Vertex2D &start, const Vertex2D &end) : start(start), end(end) {}
 
 Line::~Line() = default;

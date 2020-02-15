@@ -8,6 +8,8 @@ class Vertex2D : Drawable {
 public:
     Vertex2D(GLuint x, GLuint y);
 
+    Vertex2D(int x, int y);
+
     virtual ~Vertex2D();
 
     GLuint getX() const;

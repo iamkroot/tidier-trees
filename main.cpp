@@ -2,7 +2,7 @@
 #include "BinTree.h"
 
 int main() {
-    GLFWwindow* window = initGL();
+    GLFWwindow *window = initGL();
     if (window == nullptr) {
         return 1;
     }
@@ -14,6 +14,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        tree.draw();
         glFlush();
         glfwWaitEvents();
     }

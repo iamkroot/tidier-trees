@@ -2,6 +2,11 @@
 
 Vertex2D::Vertex2D(GLuint x, GLuint y) : x(x), y(y) {}
 
+Vertex2D::Vertex2D(int x, int y) {
+    this->x = x;
+    this->y = y;
+}
+
 Vertex2D::~Vertex2D() = default;
 
 GLuint Vertex2D::getX() const {
