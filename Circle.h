@@ -1,11 +1,11 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
+#include <functional>
 #include <vector>
-#include "Drawable.h"
 #include "Vertex2D.h"
 
-class Circle : Drawable {
+class Circle {
     Vertex2D center;
     GLuint radius;
     std::vector<Vertex2D> points;
@@ -23,12 +23,21 @@ public:
     virtual ~Circle();
 
     /**
+     * @brief Check whether the given point is interior to the circle
+     * @param point Point to be checked
+     * @return true if point is inside
+     */
+    [[nodiscard]] bool contains(const Vertex2D &point) const;
+
+    /**
      * @brief Rasterize circle using midpoint algorithm
+     * @param filter Callback function to determine whether point should be drawn or not
      * @return Success
      */
-    std::vector<Vertex2D> fillPoints();
+    std::vector<Vertex2D>
+    fillPoints(const std::function<bool(Vertex2D)> &filter = [](const Vertex2D &p) { return true; });
 
-    bool draw() override;
+    bool draw();
 
 };
 

@@ -18,9 +18,9 @@ void Circle::drawSymmetricPoints(const int x, const int y) {
     });
 }
 
-std::vector<Vertex2D> Circle::fillPoints() {
+std::vector<Vertex2D> Circle::fillPoints(const std::function<bool(Vertex2D)> &filter) {
     int x = 0, y = radius;
-    int d = 1 - (int)y;
+    int d = 1 - (int) y;
     int deltaE = 3;
     int deltaSE = -2 * y + 5;
     drawSymmetricPoints(x, y);
@@ -51,4 +51,8 @@ bool Circle::draw() {
     }
     glEnd();
     return true;
+}
+
+bool Circle::contains(const Vertex2D &point) const {
+    return center.euclideanDistSq(point) <= (radius * radius);
 }

@@ -2,12 +2,11 @@
 #define BINTREE_H
 
 #include <vector>
-#include "Drawable.h"
 #include "Vertex2D.h"
 #include "Line.h"
 #include "Circle.h"
 
-class BinTree : Drawable {
+class BinTree {
     BinTree *left;
     BinTree *right;
     Vertex2D *center{};
@@ -29,11 +28,12 @@ class BinTree : Drawable {
         }
     };
 
+    Circle* circle{};
     std::vector<Vertex2D> points;
 
     static void setup(BinTree *tree, int level, Extreme *lMost, Extreme *rMost, int minSep);
 
-    static void petrify(BinTree *tree, int x);
+    static void petrify(BinTree *tree, int x, int y, int scaleY);
 
 public:
     BinTree();
@@ -42,7 +42,7 @@ public:
 
     virtual ~BinTree();
 
-    bool draw() override;
+    bool draw();
 
     std::vector<Vertex2D> fillPoints(BinTree *tree);
 };

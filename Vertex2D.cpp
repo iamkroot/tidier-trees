@@ -31,3 +31,8 @@ bool Vertex2D::draw() {
     glEnd();
     return true;
 }
+
+GLuint Vertex2D::euclideanDistSq(const Vertex2D &other) const {
+    auto delX = x - other.getX(), delY = y - other.getY();
+    return delX * delX + delY * delY;
+}
