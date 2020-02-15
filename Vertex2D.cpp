@@ -17,6 +17,14 @@ GLuint Vertex2D::getY() const {
     return y;
 }
 
+void Vertex2D::setX(GLuint val) {
+    Vertex2D::x = val;
+}
+
+void Vertex2D::setY(GLuint val) {
+    Vertex2D::y = val;
+}
+
 bool Vertex2D::draw() {
     glBegin(GL_POINTS);
     glVertex2i(x, y);

@@ -1,5 +1,4 @@
-#include "Line.h"
-#include "Circle.h"
+#include "GLUtils.h"
 #include "BinTree.h"
 
 BinTree::BinTree() : left(nullptr), right(nullptr) {};
@@ -20,7 +19,10 @@ void BinTree::setup(BinTree *tree, int level, BinTree::Extreme *lMost, BinTree::
         rMost->level = -1;
         return;
     }
-    tree->y = level;
+    if (not tree->center) {
+        tree->center = new Vertex2D(0, 0);
+    }
+    tree->center->setY(level);
     BinTree *l = tree->left;
     BinTree *r = tree->right;
     Extreme lr, ll, rr, rl;
@@ -100,7 +102,7 @@ void BinTree::setup(BinTree *tree, int level, BinTree::Extreme *lMost, BinTree::
 void BinTree::petrify(BinTree *tree, int x) {
     if (not tree)
         return;
-    tree->x = x;
+    tree->center->setX(x);
     if (tree->threaded) {
         tree->threaded = false;
         tree->right = tree->left = nullptr;
@@ -109,27 +111,38 @@ void BinTree::petrify(BinTree *tree, int x) {
     petrify(tree->right, x + tree->offset);
 }
 
-bool BinTree::draw() {
-    Extreme lm, rm;
-    setup(this, 0, &lm, &rm, 100);
-    petrify(this, 300);
-    draw(this);
-    return true;
-}
-
-void BinTree::draw(BinTree *tree) {
+std::vector<Vertex2D> BinTree::fillPoints(BinTree* tree) {
     if (not tree)
-        return;
-    Circle c = Circle({static_cast<GLuint>(tree->x), static_cast<GLuint>(tree->y * 50 + 200)}, 20);
-    c.draw();
+        return {};
+    auto c = Circle(*tree->center, 15);
+    auto circle_pts = c.fillPoints();
+    points.insert(points.end(), circle_pts.begin(), circle_pts.end());
     if (tree->left) {
-        Line l = Line({tree->x, tree->y * 50 + 200}, {tree->left->x, tree->left->y * 50 + 200});
-        l.draw();
-        draw(tree->left);
+        auto l = Line(*tree->center, *tree->left->center);
+        auto line_pts = l.fillPoints();
+        points.insert(points.end(), line_pts.begin(), line_pts.end());
+        fillPoints(tree->left);
     }
     if (tree->right) {
-        Line l = Line({tree->x, tree->y * 50 + 200}, {tree->right->x, tree->right->y * 50 + 200});
-        l.draw();
-        draw(tree->right);
+        auto l = Line(*tree->center, *tree->right->center);
+        auto line_pts = l.fillPoints();
+        points.insert(points.end(), line_pts.begin(), line_pts.end());
+        fillPoints(tree->right);
     }
+    return points;
+}
+
+bool BinTree::draw() {
+    if (points.empty()) {
+        this->center = new Vertex2D(0, 0);
+        setup(this, 0, new Extreme(), new Extreme(), 50);
+        petrify(this, windowWidth / 2);
+        fillPoints(this);
+    }
+    glBegin(GL_POINTS);
+    for (const auto &point : points) {
+        glVertex2i(point.getX(), point.getY());
+    }
+    glEnd();
+    return true;
 }

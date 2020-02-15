@@ -3,11 +3,14 @@
 
 #include <vector>
 #include "Drawable.h"
+#include "Vertex2D.h"
+#include "Line.h"
+#include "Circle.h"
 
 class BinTree : Drawable {
     BinTree *left;
     BinTree *right;
-    int x{}, y{};
+    Vertex2D *center{};
     int offset{};
     bool threaded{};
 
@@ -26,11 +29,11 @@ class BinTree : Drawable {
         }
     };
 
+    std::vector<Vertex2D> points;
+
     static void setup(BinTree *tree, int level, Extreme *lMost, Extreme *rMost, int minSep);
 
     static void petrify(BinTree *tree, int x);
-
-    static void draw(BinTree *tree);
 
 public:
     BinTree();
@@ -40,6 +43,8 @@ public:
     virtual ~BinTree();
 
     bool draw() override;
+
+    std::vector<Vertex2D> fillPoints(BinTree *tree);
 };
 
 #endif //BINTREE_H

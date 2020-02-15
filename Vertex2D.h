@@ -16,6 +16,10 @@ public:
 
     GLuint getY() const;
 
+    void setX(GLuint val);
+
+    void setY(GLuint val);
+
     bool draw() override;
 };
 
