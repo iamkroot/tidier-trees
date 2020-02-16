@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 #include "GLUtils.h"
 #include "BinTree.h"
 
@@ -156,6 +157,33 @@ bool BinTree::draw() {
     }
     glEnd();
     return true;
+}
+
+void BinTree::setLeft(BinTree *left) {
+    BinTree::left = left;
+}
+
+void BinTree::setRight(BinTree *right) {
+    BinTree::right = right;
+}
+
+
+BinTree *genRandomTree(int height, bool complete) {
+    if (height < 0) {
+        height = (int)std::random_device()() % 10;
+    }
+    if (not height)
+        return nullptr;
+    if (not complete and not(std::random_device()() % 5))
+        return nullptr;
+    auto tree = new BinTree();
+    if (complete or std::random_device()() % 4) {
+        tree->setLeft(genRandomTree(height - 1, complete));
+    }
+    if (complete or std::random_device()() % 4) {
+        tree->setRight(genRandomTree(height - 1, complete));
+    }
+    return tree;
 }
 
 std::vector<BinTree *> genTrees() {

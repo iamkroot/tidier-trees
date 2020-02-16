@@ -42,10 +42,16 @@ public:
 
     virtual ~BinTree();
 
+    void setLeft(BinTree *left);
+
+    void setRight(BinTree *right);
+
     bool draw();
 
     std::vector<Vertex2D> fillPoints(BinTree *tree);
 };
+
+BinTree *genRandomTree(int height = -1, bool complete = false);
 
 std::vector<BinTree *> genTrees();
 
