@@ -1,7 +1,7 @@
 #include "GLUtils.h"
 #include "BinTree.h"
 
-std::vector<BinTree*> trees;
+std::vector<BinTree *> trees;
 unsigned int treeIndex = 0;
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
@@ -18,20 +18,28 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 #undef keyPressed
 }
 
+void scroll_callback(GLFWwindow *window, double xOffset, double yOffset) {
+    float scale = yOffset > 0 ? 1.25 : 0.75;
+    glTranslatef(windowWidth / 2. * (1 - scale), windowHeight / 2. * (1 - scale), 0);  // center around window midpoints
+    glScalef(scale, scale, scale);
+}
+
 int main() {
     GLFWwindow *window = initGL();
-    glfwSetKeyCallback(window, key_callback);
     if (window == nullptr) {
         return 1;
     }
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     trees = genTrees();
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+
         trees[treeIndex]->draw();
+
         glFlush();
         glfwWaitEvents();
     }
