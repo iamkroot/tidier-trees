@@ -11,6 +11,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, 1);
     } else if (keyPressed(GLFW_KEY_N)) {  // next tree
         treeIndex = (treeIndex + 1) % trees.size();
+    } else if (keyPressed(GLFW_KEY_P)) {  // previous tree
+        treeIndex = (treeIndex ? treeIndex : trees.size()) - 1;
     } else if (keyPressed(GLFW_KEY_R)) {  // random tree
         auto tree = genRandomTree();
         while (not tree)  // in case it returns null tree
