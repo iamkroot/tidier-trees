@@ -192,7 +192,8 @@ std::vector<BinTree *> genTrees() {
             node,
             node(node, node),
             node(node(node(), node()), node(node(), {})),
-            node({}, node(node({}, node(node({}, node), {})), {}))  //thunderbolt
+            node({}, node(node({}, node(node({}, node(node({}, node()), {})), {})), {})),  // thunderbolt
+            genRandomTree(5, true),  // full tree of height 6
     };
 #undef node
     return trees;

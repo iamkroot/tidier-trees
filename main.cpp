@@ -12,9 +12,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     } else if (keyPressed(GLFW_KEY_N)) {  // next tree
         treeIndex = (treeIndex + 1) % trees.size();
     } else if (keyPressed(GLFW_KEY_R)) {  // random tree
-        auto tree = genRandomTree(6);
+        auto tree = genRandomTree();
         while (not tree)  // in case it returns null tree
-            tree = genRandomTree(6);
+            tree = genRandomTree();
         trees.insert(trees.begin() + treeIndex + 1, tree);
         treeIndex++;
     } else if (keyPressed(GLFW_KEY_W) || keyPressed(GLFW_KEY_UP)) {  // pan up
