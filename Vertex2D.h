@@ -4,28 +4,26 @@
 #include <GL/gl.h>
 
 class Vertex2D {
-    GLuint x, y;
+    int x, y;
 public:
-    Vertex2D(GLuint x, GLuint y);
-
     Vertex2D(int x, int y);
 
     virtual ~Vertex2D();
 
-    GLuint getX() const;
+    int getX() const;
 
-    GLuint getY() const;
+    int getY() const;
 
-    void setX(GLuint val);
+    void setX(int val);
 
-    void setY(GLuint val);
+    void setY(int val);
 
     /**
      * @brief Calculate the square of the euclidean distance between the points
      * @param other
      * @return The square of Euclidean distance
      */
-    [[nodiscard]] GLuint euclideanDistSq(const Vertex2D &other) const;
+    [[nodiscard]] int euclideanDistSq(const Vertex2D &other) const;
 
     bool draw();
 };

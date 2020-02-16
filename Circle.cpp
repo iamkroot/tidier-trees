@@ -5,7 +5,7 @@ Circle::Circle(const Vertex2D &center, GLuint radius) : center(center), radius(r
 Circle::~Circle() = default;
 
 void Circle::drawSymmetricPoints(const int x, const int y) {
-    GLuint centerX = center.getX(), centerY = center.getY();
+    int centerX = center.getX(), centerY = center.getY();
     points.insert(points.end(), {
             {centerX + x, centerY + y},
             {centerX + x, centerY - y},
