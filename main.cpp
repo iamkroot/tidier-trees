@@ -5,6 +5,7 @@ std::vector<BinTree *> trees;
 unsigned int treeIndex = 0;
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    int deltaX = 0, deltaY = 0, jump = 50;
 #define keyPressed(key_id) (key == key_id && action == GLFW_RELEASE)
     if (keyPressed(GLFW_KEY_ESCAPE)) {  // quit
         glfwSetWindowShouldClose(window, 1);
@@ -14,7 +15,21 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         // TODO: Generate random tree
         trees.insert(trees.begin() + treeIndex + 1, new BinTree(new BinTree(), {}));
         treeIndex++;
+    } else if (keyPressed(GLFW_KEY_W) || keyPressed(GLFW_KEY_UP)) {  // pan up
+        deltaY = jump;
+    } else if (keyPressed(GLFW_KEY_S) || keyPressed(GLFW_KEY_DOWN)) {  // pan down
+        deltaY = -jump;
+    } else if (keyPressed(GLFW_KEY_A) || keyPressed(GLFW_KEY_LEFT)) {  // pan left
+        deltaX = -jump;
+    } else if (keyPressed(GLFW_KEY_D) || keyPressed(GLFW_KEY_RIGHT)) {  // pan right
+        deltaX = jump;
+    } else if (keyPressed(GLFW_KEY_Z)) {  // reset view
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
     }
+    glMatrixMode(GL_MODELVIEW);
+    glTranslatef(deltaX, deltaY, 0.f);
+
 #undef keyPressed
 }
 

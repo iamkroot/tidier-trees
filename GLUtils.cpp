@@ -1,5 +1,5 @@
-#include "GLUtils.h"
 #include <iostream>
+#include "GLUtils.h"
 
 int windowWidth = 800;
 int windowHeight = 600;
@@ -11,7 +11,7 @@ GLFWwindow* initGL() {
         return nullptr;
     }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_FALSE);
     GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
     if (window == nullptr) {
