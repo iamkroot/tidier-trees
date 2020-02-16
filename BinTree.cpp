@@ -157,3 +157,15 @@ bool BinTree::draw() {
     glEnd();
     return true;
 }
+
+std::vector<BinTree *> genTrees() {
+#define node new BinTree
+    std::vector<BinTree *> trees{
+            node,
+            node(node, node),
+            node(node(node(), node()), node(node(), {})),
+            node({}, node(node({}, node(node({}, node), {})), {}))  //thunderbolt
+    };
+#undef node
+    return trees;
+}

@@ -28,7 +28,7 @@ class BinTree {
         }
     };
 
-    Circle* circle{};
+    Circle *circle{};
     std::vector<Vertex2D> points;
 
     static void setup(BinTree *tree, int level, Extreme *lMost, Extreme *rMost, int minSep);
@@ -46,5 +46,7 @@ public:
 
     std::vector<Vertex2D> fillPoints(BinTree *tree);
 };
+
+std::vector<BinTree *> genTrees();
 
 #endif //BINTREE_H
