@@ -7,7 +7,7 @@ unsigned int treeIndex = 0;
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     int deltaX = 0, deltaY = 0, jump = 50;
 #define keyPressed(key_id) (key == key_id && action == GLFW_RELEASE)
-    if (keyPressed(GLFW_KEY_ESCAPE)) {  // quit
+    if (keyPressed(GLFW_KEY_ESCAPE) || keyPressed(GLFW_KEY_Q)) {  // quit
         glfwSetWindowShouldClose(window, 1);
     } else if (keyPressed(GLFW_KEY_N)) {  // next tree
         treeIndex = (treeIndex + 1) % trees.size();
@@ -19,14 +19,14 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
             tree = genRandomTree();
         trees.insert(trees.begin() + treeIndex + 1, tree);
         treeIndex++;
-    } else if (keyPressed(GLFW_KEY_W) || keyPressed(GLFW_KEY_UP)) {  // pan up
-        deltaY = jump;
-    } else if (keyPressed(GLFW_KEY_S) || keyPressed(GLFW_KEY_DOWN)) {  // pan down
+    } else if (keyPressed(GLFW_KEY_W) || keyPressed(GLFW_KEY_UP)) {  // move cam up
         deltaY = -jump;
-    } else if (keyPressed(GLFW_KEY_A) || keyPressed(GLFW_KEY_LEFT)) {  // pan left
-        deltaX = -jump;
-    } else if (keyPressed(GLFW_KEY_D) || keyPressed(GLFW_KEY_RIGHT)) {  // pan right
+    } else if (keyPressed(GLFW_KEY_S) || keyPressed(GLFW_KEY_DOWN)) {  // move cam down
+        deltaY = jump;
+    } else if (keyPressed(GLFW_KEY_A) || keyPressed(GLFW_KEY_LEFT)) {  // move cam left
         deltaX = jump;
+    } else if (keyPressed(GLFW_KEY_D) || keyPressed(GLFW_KEY_RIGHT)) {  // move cam right
+        deltaX = -jump;
     } else if (keyPressed(GLFW_KEY_Z)) {  // reset view
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
