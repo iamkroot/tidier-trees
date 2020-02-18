@@ -19,7 +19,7 @@ BinTree::~BinTree() {
     circle = nullptr;
 }
 
-void BinTree::setup(BinTree *tree, int level, BinTree::Extreme *lMost, BinTree::Extreme *rMost, int minSep) {
+void BinTree::setup(BinTree *tree, int level, Extreme *rMost, Extreme *lMost, int minSep) {
     if (not tree) {  // base case
         lMost->level = -1;
         rMost->level = -1;
@@ -31,8 +31,8 @@ void BinTree::setup(BinTree *tree, int level, BinTree::Extreme *lMost, BinTree::
     BinTree *l = tree->left;
     BinTree *r = tree->right;
     Extreme lr, ll, rr, rl;
-    setup(l, level + 1, &ll, &lr, minSep);
-    setup(r, level + 1, &rl, &rr, minSep);
+    setup(l, level + 1, &lr, &ll, minSep);
+    setup(r, level + 1, &rr, &rl, minSep);
     if (not l and not r) {  // leaf node
         lMost->node = rMost->node = tree;
         lMost->level = rMost->level = level;
@@ -142,11 +142,10 @@ std::vector<Vertex2D> BinTree::fillPoints(BinTree *tree) {
 
 bool BinTree::draw() {
     if (points.empty()) {
-        this->center = new Vertex2D(0, 0);
-        auto *lm = new Extreme();
         auto *rm = new Extreme();
-        setup(this, 0, lm, rm, 50);
-        delete lm;
+        auto *lm = new Extreme();
+        setup(this, 0, rm, lm, 50);
+        delete lm;  // keep valgrind happy
         delete rm;
         petrify(this, windowWidth / 2, 500, -50);
         fillPoints(this);
@@ -167,10 +166,9 @@ void BinTree::setRight(BinTree *right) {
     BinTree::right = right;
 }
 
-
 BinTree *genRandomTree(int height, bool complete) {
     if (height < 0) {
-        height = (int)std::random_device()() % 10;
+        height = (int) std::random_device()() % 10;
     }
     if (not height)
         return nullptr;
@@ -193,7 +191,7 @@ std::vector<BinTree *> genTrees() {
             node(node, node),
             node(node(node(), node()), node(node(), {})),
             node({}, node(node({}, node(node({}, node(node({}, node()), {})), {})), {})),  // thunderbolt
-            genRandomTree(5, true),  // full tree of height 6
+            genRandomTree(5, true),  // full tree of height 5
     };
 #undef node
     return trees;
