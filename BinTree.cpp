@@ -8,10 +8,8 @@ BinTree::BinTree() : left(nullptr), right(nullptr) {};
 BinTree::BinTree(BinTree *left, BinTree *right) : left(left), right(right) {}
 
 BinTree::~BinTree() {
-    if (left)
-        left->~BinTree();
-    if (right)
-        right->~BinTree();
+    delete left;
+    delete right;
     delete center;
     delete circle;
     left = right = nullptr;
@@ -187,8 +185,8 @@ BinTree *genRandomTree(int height, bool complete) {
 std::vector<BinTree *> genTrees() {
 #define node new BinTree
     std::vector<BinTree *> trees{
-            node,
-            node(node, node),
+            node(),
+            node(node(), node()),
             node(node(node(), node()), node(node(), {})),
             node({}, node(node({}, node(node({}, node(node({}, node()), {})), {})), {})),  // thunderbolt
             genRandomTree(5, true),  // full tree of height 5

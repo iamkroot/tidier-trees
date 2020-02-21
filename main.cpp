@@ -62,5 +62,8 @@ int main() {
         glFlush();
         glfwWaitEvents();
     }
+    for (auto tree : trees) {
+        delete tree;
+    }
     glfwTerminate();
 }

@@ -33,3 +33,8 @@ An implementation of the [Tidier Drawings of Trees](https://reingold.co/tidier-d
 | `r`                                           | Generate a random tree              |
 | `n`/`p`                                       | Next/previous tree in the slideshow |
 | `ESC`/`q`                                     | Close the window                    |
+
+## Additional Info
+
+* Valgrind output - 2 leaks from `glfwCreateWindow` function
+![](assets/valgrind.png)
