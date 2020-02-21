@@ -22,3 +22,14 @@ An implementation of the [Tidier Drawings of Trees](https://reingold.co/tidier-d
     * `GLEW`
 * Use `cmake` to build the project: `cmake -G "CodeBlocks - Unix Makefiles" /path/to/tidier-trees`
 * Run the output executable `tidier_trees`
+
+### Keyboard bindings
+
+| Key                                           | Action                              |
+| --------------------------------------------- | ----------------------------------- |
+| `w`/`s`/`a`/`d` or `UP`/`DOWN`/`LEFT`/`RIGHT` | Scroll the camera in that direction |
+| `MOUSE_VERTICAL_SCROLL`                       | Zoom In/Out                         |
+| `z`                                           | Reset camera                        |
+| `r`                                           | Generate a random tree              |
+| `n`/`p`                                       | Next/previous tree in the slideshow |
+| `ESC`/`q`                                     | Close the window                    |
