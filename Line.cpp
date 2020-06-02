@@ -11,56 +11,58 @@ std::vector<Vertex2D> Line::fillPoints(const std::function<bool(Vertex2D)> &filt
         std::swap(_start, _end);
         dx *= -1;
     }
+
+    // setup variables
     int dy = (int) _end.getY() - (int) _start.getY();
-    bool neg = (dx < 0) ^(dy < 0);
-    int d, d_step_pos, d_step_neg;
-    bool one_per_row;
-    if (abs(dy) < abs(dx)) {  // -1 < m < 1
-        one_per_row = true;
+    bool neg = dy < 0;  // going down
+    int decisionParam, decisionPosStep, decisionNegStep;
+    bool slopeGentle = abs(dy) < dx;
+    if (slopeGentle) {  // -1 < m < 1
         if (not neg) {
-            d = 2 * dy - dx;
-            d_step_pos = 2 * (dy - dx);
-            d_step_neg = 2 * dy;
+            decisionParam = 2 * dy - dx;
+            decisionPosStep = 2 * (dy - dx);  // go NE
+            decisionNegStep = 2 * dy;  // go E
         } else {
-            d = (2 * dy + dx);
-            d_step_neg = 2 * (dy + dx);
-            d_step_pos = 2 * dy;
+            decisionParam = 2 * dy + dx;
+            decisionNegStep = 2 * (dy + dx);  // go SE
+            decisionPosStep = 2 * dy;  // go E
         }
     } else { // |m| >= 1
-        one_per_row = false;
         if (not neg) {
-            d = dy - 2 * dx;
-            d_step_pos = -2 * dx;
-            d_step_neg = 2 * (dy - dx);
+            decisionParam = dy - 2 * dx;
+            decisionPosStep = -2 * dx;  // go N
+            decisionNegStep = 2 * (dy - dx);  // go NE
         } else {
-            d = (dy + 2 * dx);
-            d_step_pos = 2 * (dy + dx);
-            d_step_neg = 2 * dx;
+            decisionParam = dy + 2 * dx;
+            decisionPosStep = 2 * (dy + dx);  // go SE
+            decisionNegStep = 2 * dx;  // go E
         }
     }
+
+    // start looping
     int x = _start.getX(), y = _start.getY();
     if (filter({x, y}))
         points.emplace_back(x, y);
-    while ((one_per_row and (x <= _end.getX())) or (not one_per_row and (neg xor (y <= _end.getY())))) {
-        if (d < 0) {
-            d += d_step_neg;
-            if (neg and one_per_row) {
+    while ((slopeGentle and (x <= _end.getX())) or (not slopeGentle and (neg xor (y <= _end.getY())))) {
+        if (decisionParam < 0) {
+            decisionParam += decisionNegStep;
+            if (neg and slopeGentle) {  // go S
                 y--;
-            } else if (not neg and not one_per_row) {
+            } else if (not neg and not slopeGentle) {  // go NE
                 x++;
             }
         } else {
-            d += d_step_pos;
-            if (neg and not one_per_row) {
+            decisionParam += decisionPosStep;
+            if (neg and not slopeGentle) {  // go SE
                 x++;
-            } else if (not neg and one_per_row) {
+            } else if (not neg and slopeGentle) {  // go N
                 y++;
             }
         }
-        if (one_per_row)
+        if (slopeGentle)
             x++;
         else
-            y += 2 * !neg - 1;
+            y += neg ? -1 : 1;  // going one step up or down
         if (filter({x, y}))
             points.emplace_back(x, y);
     }
