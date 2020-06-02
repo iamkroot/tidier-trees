@@ -7,64 +7,50 @@ Line::~Line() = default;
 std::vector<Vertex2D> Line::fillPoints(const std::function<bool(Vertex2D)> &filter) {
     Vertex2D _start = start, _end = end;
     int dx = (int) _end.getX() - (int) _start.getX();
-    if (dx < 0) {  // handle cases for left half of the plane
+    if (dx < 0) {  // going left
         std::swap(_start, _end);
         dx *= -1;
     }
 
-    // setup variables
-    int dy = (int) _end.getY() - (int) _start.getY();
+    int dy = (int) _end.getY() - (int) _start.getY(), sign = 1;
     bool neg = dy < 0;  // going down
+    if (neg) {  // reflect about x-axis
+        _start.setY(-_start.getY());
+        _end.setY(-end.getY());
+        dy *= (sign = -1);
+    }
+
+    // setup decision variables
     int decisionParam, decisionPosStep, decisionNegStep;
-    bool slopeGentle = abs(dy) < dx;
-    if (slopeGentle) {  // -1 < m < 1
-        if (not neg) {
-            decisionParam = 2 * dy - dx;
-            decisionPosStep = 2 * (dy - dx);  // go NE
-            decisionNegStep = 2 * dy;  // go E
-        } else {
-            decisionParam = 2 * dy + dx;
-            decisionNegStep = 2 * (dy + dx);  // go SE
-            decisionPosStep = 2 * dy;  // go E
-        }
-    } else { // |m| >= 1
-        if (not neg) {
-            decisionParam = dy - 2 * dx;
-            decisionPosStep = -2 * dx;  // go N
-            decisionNegStep = 2 * (dy - dx);  // go NE
-        } else {
-            decisionParam = dy + 2 * dx;
-            decisionPosStep = 2 * (dy + dx);  // go SE
-            decisionNegStep = 2 * dx;  // go E
-        }
+    bool isLineSteep = dy > dx;
+    if (isLineSteep) {
+        decisionParam = dy - 2 * dx;
+        decisionPosStep = -2 * dx;  // N
+        decisionNegStep = 2 * (dy - dx);  // NE
+    } else {
+        decisionParam = 2 * dy - dx;
+        decisionPosStep = 2 * (dy - dx);  // NE
+        decisionNegStep = 2 * dy;  // E
     }
 
     // start looping
     int x = _start.getX(), y = _start.getY();
-    if (filter({x, y}))
-        points.emplace_back(x, y);
-    while ((slopeGentle and (x <= _end.getX())) or (not slopeGentle and (neg xor (y <= _end.getY())))) {
+    while ((not isLineSteep and x <= _end.getX()) or (isLineSteep and y <= _end.getY())) {
+        if (filter({x, y * sign}))
+            points.emplace_back(x, y * sign);
         if (decisionParam < 0) {
             decisionParam += decisionNegStep;
-            if (neg and slopeGentle) {  // go S
-                y--;
-            } else if (not neg and not slopeGentle) {  // go NE
+            if (isLineSteep)
                 x++;
-            }
         } else {
             decisionParam += decisionPosStep;
-            if (neg and not slopeGentle) {  // go SE
-                x++;
-            } else if (not neg and slopeGentle) {  // go N
+            if (not isLineSteep)
                 y++;
-            }
         }
-        if (slopeGentle)
-            x++;
+        if (isLineSteep)
+            y++;
         else
-            y += neg ? -1 : 1;  // going one step up or down
-        if (filter({x, y}))
-            points.emplace_back(x, y);
+            x++;
     }
     return points;
 }
