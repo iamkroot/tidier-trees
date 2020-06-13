@@ -1,5 +1,6 @@
 #include "GLUtils.h"
 #include "BinTree.h"
+#include <iostream>
 
 std::vector<BinTree*> trees;
 unsigned int treeIndex = 0;
@@ -30,6 +31,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     } else if (keyPressed(GLFW_KEY_Z)) {  // reset view
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+    } else if (keyPressed(GLFW_KEY_C)) {
+        std::cout<<trees[treeIndex]->dumpTree()<<std::endl;
     }
     glMatrixMode(GL_MODELVIEW);
     glTranslatef(deltaX, deltaY, 0.f);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <random>
 #include "GLUtils.h"
 #include "BinTree.h"
@@ -17,7 +18,7 @@ BinTree::~BinTree() {
     circle = nullptr;
 }
 
-void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, int minSep) {
+void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost) {
     if (not tree) {  // base case
         lMost->level = -1;
         rMost->level = -1;
@@ -27,8 +28,8 @@ void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, in
     BinTree* l = tree->left;
     BinTree* r = tree->right;
     Extreme lr, ll, rr, rl;
-    setup(l, level + 1, &lr, &ll, minSep);
-    setup(r, level + 1, &rr, &rl, minSep);
+    setup(l, level + 1, &lr, &ll);
+    setup(r, level + 1, &rr, &rl);
 
     if (not l and not r) {  // leaf node
         lMost->node = rMost->node = tree;
@@ -39,13 +40,13 @@ void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, in
     }
 
     int curSep, rootSep, lOffSum, rOffSum;
-    curSep = rootSep = minSep;
+    curSep = rootSep = 1;
     lOffSum = rOffSum = 0;
     // increase the separation between left and right subtrees
     while (l and r) {
-        if (curSep < minSep) {
-            rootSep += minSep - curSep;
-            curSep = minSep;
+        if (curSep < 1) {
+            rootSep += 1 - curSep;
+            curSep = 1;
         }
         if (l->right) {
             lOffSum += l->offset;
@@ -67,7 +68,7 @@ void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, in
         }
     }
 
-    tree->offset = rootSep / 2;
+    tree->offset = (rootSep + 1) / 2;
     lOffSum -= tree->offset;
     rOffSum += tree->offset;
 
@@ -109,23 +110,23 @@ void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, in
     }
 }
 
-void BinTree::petrify(BinTree* tree, int x, int y, int scaleY) {
+void BinTree::petrify(BinTree* tree, int x, int y, int scaleX, int scaleY) {
     if (not tree)
         return;
-    tree->center->setX(x);
+    tree->center->setX(x * scaleX);
     tree->center->setY(y);
     if (tree->threaded) {  // delete the threads
         tree->threaded = false;
         tree->right = tree->left = nullptr;
     }
-    petrify(tree->left, x - tree->offset, y + scaleY, scaleY);
-    petrify(tree->right, x + tree->offset, y + scaleY, scaleY);
+    petrify(tree->left, x - tree->offset, y + scaleY, scaleX, scaleY);
+    petrify(tree->right, x + tree->offset, y + scaleY, scaleX, scaleY);
 }
 
 std::vector<Vertex2D> BinTree::fillPoints(BinTree* tree) {
     if (not tree)
         return {};
-    tree->circle = new Circle(*tree->center, 15);
+    tree->circle = new Circle(*tree->center, 10);
     auto circle_pts = tree->circle->fillPoints();
     points.insert(points.end(), circle_pts.begin(), circle_pts.end());
     if (tree->left) {
@@ -148,8 +149,8 @@ std::vector<Vertex2D> BinTree::fillPoints(BinTree* tree) {
 bool BinTree::draw() {
     if (points.empty()) {
         Extreme rm, lm;
-        setup(this, 0, &rm, &lm, 50);
-        petrify(this, windowWidth / 2, 500, -50);
+        setup(this, 0, &rm, &lm);
+        petrify(this, windowWidth / 50, 500, 25, -25);
         fillPoints(this);
     }
     glBegin(GL_POINTS);
@@ -166,6 +167,26 @@ void BinTree::setLeft(BinTree* left) {
 
 void BinTree::setRight(BinTree* right) {
     BinTree::right = right;
+}
+
+std::string BinTree::dumpTree() {
+    std::stringstream ss;
+    ss << "node(";
+    if (left or right) {
+        if (left) {
+            ss << left->dumpTree();
+        } else {
+            ss << "{}";
+        }
+        ss << ", ";
+        if (right) {
+            ss << right->dumpTree();
+        } else {
+            ss << "{}";
+        }
+    }
+    ss << ")";
+    return ss.str();
 }
 
 BinTree* genRandomTree(int height, bool complete) {
@@ -194,7 +215,6 @@ std::vector<BinTree*> genTrees() {
             node(node(node(), node()), node(node(), {})),
             node({}, node(node({}, node(node({}, node(node({}, node()), {})), {})), {})),  // thunderbolt
             genRandomTree(5, true),  // full tree of height 5
-            node(genRandomTree(8, true), node(node(node(node(node(), {}), {}), {}), {}))
     };
 #undef node
     return trees;

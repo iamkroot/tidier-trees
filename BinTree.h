@@ -1,6 +1,7 @@
 #ifndef BINTREE_H
 #define BINTREE_H
 
+#include <string>
 #include <vector>
 #include "Vertex2D.h"
 #include "Line.h"
@@ -42,9 +43,8 @@ class BinTree {
      * @param level Current depth (root has 0 depth)
      * @param rMost Pointer to a record of the rightmost node in the left subtree
      * @param lMost Pointer to a record of the leftmost node in the right subtree
-     * @param minSep Minimum horizontal distance between siblings
      */
-    static void setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, int minSep);
+    static void setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost);
 
     /**
      * @brief Compute the final x and y coordinates of the nodes
@@ -53,7 +53,7 @@ class BinTree {
      * @param y The y coordinate
      * @param scaleY The scaling factor for the y coordinates
      */
-    static void petrify(BinTree* tree, int x, int y, int scaleY);
+    static void petrify(BinTree* tree, int x, int y, int scaleX, int scaleY);
 
 public:
 
@@ -73,6 +73,8 @@ public:
      * @return The entire set of points of the tree figure
      */
     std::vector<Vertex2D> fillPoints(BinTree* tree);
+
+    std::string dumpTree();
 };
 
 /**
