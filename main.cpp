@@ -1,10 +1,10 @@
 #include "GLUtils.h"
 #include "BinTree.h"
 
-std::vector<BinTree *> trees;
+std::vector<BinTree*> trees;
 unsigned int treeIndex = 0;
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     int deltaX = 0, deltaY = 0, jump = 50;
 #define keyPressed(key_id) (key == key_id && action == GLFW_RELEASE)
     if (keyPressed(GLFW_KEY_ESCAPE) || keyPressed(GLFW_KEY_Q)) {  // quit
@@ -37,14 +37,14 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 #undef keyPressed
 }
 
-void scroll_callback(GLFWwindow *window, double xOffset, double yOffset) {
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset) {
     float scale = yOffset > 0 ? 1.25 : 0.75;
     glTranslatef(windowWidth / 2. * (1 - scale), windowHeight / 2. * (1 - scale), 0);  // center around window midpoints
     glScalef(scale, scale, scale);
 }
 
 int main() {
-    GLFWwindow *window = initGL();
+    GLFWwindow* window = initGL();
     if (window == nullptr) {
         return 1;
     }

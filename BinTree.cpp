@@ -3,9 +3,9 @@
 #include "GLUtils.h"
 #include "BinTree.h"
 
-BinTree::BinTree() : left(nullptr), right(nullptr) {};
-
-BinTree::BinTree(BinTree *left, BinTree *right) : left(left), right(right) {}
+BinTree::BinTree(BinTree* left, BinTree* right) : left(left), right(right) {
+    center = new Vertex2D(0, 0);
+}
 
 BinTree::~BinTree() {
     delete left;
@@ -17,20 +17,19 @@ BinTree::~BinTree() {
     circle = nullptr;
 }
 
-void BinTree::setup(BinTree *tree, int level, Extreme *rMost, Extreme *lMost, int minSep) {
+void BinTree::setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, int minSep) {
     if (not tree) {  // base case
         lMost->level = -1;
         rMost->level = -1;
         return;
     }
-    if (not tree->center) {
-        tree->center = new Vertex2D(0, 0);
-    }
-    BinTree *l = tree->left;
-    BinTree *r = tree->right;
+
+    BinTree* l = tree->left;
+    BinTree* r = tree->right;
     Extreme lr, ll, rr, rl;
     setup(l, level + 1, &lr, &ll, minSep);
     setup(r, level + 1, &rr, &rl, minSep);
+
     if (not l and not r) {  // leaf node
         lMost->node = rMost->node = tree;
         lMost->level = rMost->level = level;
@@ -38,9 +37,11 @@ void BinTree::setup(BinTree *tree, int level, Extreme *rMost, Extreme *lMost, in
         tree->offset = 0;
         return;
     }
+
     int curSep, rootSep, lOffSum, rOffSum;
     curSep = rootSep = minSep;
     lOffSum = rOffSum = 0;
+    // increase the separation between left and right subtrees
     while (l and r) {
         if (curSep < minSep) {
             rootSep += minSep - curSep;
@@ -65,49 +66,55 @@ void BinTree::setup(BinTree *tree, int level, Extreme *rMost, Extreme *lMost, in
             r = r->right;
         }
     }
-    tree->offset = (rootSep + 1) / 2;
+
+    tree->offset = rootSep / 2;
     lOffSum -= tree->offset;
     rOffSum += tree->offset;
+
+    // store lowest nodes in left and right subtrees
     if (rl.level > ll.level or not tree->left) {
-        lMost->update(&rl);
+        *lMost = rl;
         lMost->offset += tree->offset;
     } else {
-        lMost->update(&ll);
+        *lMost = ll;
         lMost->offset -= tree->offset;
     }
     if (lr.level > rr.level or not tree->right) {
-        rMost->update(&lr);
+        *rMost = lr;
         rMost->offset -= tree->offset;
     } else {
-        rMost->update(&rr);
+        *rMost = rr;
         rMost->offset += tree->offset;
     }
 
+    // thread the rightmost node in left subtree (l) and leftmost node in right subtree (r)
     if (l and l != tree->left) {
         rr.node->threaded = true;
-        rr.node->offset = abs(rr.offset + tree->offset - lOffSum);
-        if (lOffSum - tree->offset <= rr.offset) {
+        rr.node->offset = rr.offset + tree->offset - lOffSum;
+        if (rr.node->offset >= 0) {  // thread as left child
             rr.node->left = l;
-        } else {
+        } else {  // overlap detected, thread as right child and separate
             rr.node->right = l;
+            rr.node->offset *= -1;
         }
     } else if (r and r != tree->right) {
         ll.node->threaded = true;
-        ll.node->offset = abs(ll.offset - tree->offset - rOffSum);
-        if (rOffSum + tree->offset >= ll.offset) {
-            ll.node->right = r;
-        } else {
+        ll.node->offset = ll.offset - tree->offset - rOffSum;
+        if (ll.node->offset >= 0) {
             ll.node->left = r;
+        } else {
+            ll.node->right = r;
+            ll.node->offset *= -1;
         }
     }
 }
 
-void BinTree::petrify(BinTree *tree, int x, int y, int scaleY) {
+void BinTree::petrify(BinTree* tree, int x, int y, int scaleY) {
     if (not tree)
         return;
     tree->center->setX(x);
     tree->center->setY(y);
-    if (tree->threaded) {
+    if (tree->threaded) {  // delete the threads
         tree->threaded = false;
         tree->right = tree->left = nullptr;
     }
@@ -115,7 +122,7 @@ void BinTree::petrify(BinTree *tree, int x, int y, int scaleY) {
     petrify(tree->right, x + tree->offset, y + scaleY, scaleY);
 }
 
-std::vector<Vertex2D> BinTree::fillPoints(BinTree *tree) {
+std::vector<Vertex2D> BinTree::fillPoints(BinTree* tree) {
     if (not tree)
         return {};
     tree->circle = new Circle(*tree->center, 15);
@@ -140,11 +147,8 @@ std::vector<Vertex2D> BinTree::fillPoints(BinTree *tree) {
 
 bool BinTree::draw() {
     if (points.empty()) {
-        auto *rm = new Extreme();
-        auto *lm = new Extreme();
-        setup(this, 0, rm, lm, 50);
-        delete lm;  // keep valgrind happy
-        delete rm;
+        Extreme rm, lm;
+        setup(this, 0, &rm, &lm, 50);
         petrify(this, windowWidth / 2, 500, -50);
         fillPoints(this);
     }
@@ -156,15 +160,15 @@ bool BinTree::draw() {
     return true;
 }
 
-void BinTree::setLeft(BinTree *left) {
+void BinTree::setLeft(BinTree* left) {
     BinTree::left = left;
 }
 
-void BinTree::setRight(BinTree *right) {
+void BinTree::setRight(BinTree* right) {
     BinTree::right = right;
 }
 
-BinTree *genRandomTree(int height, bool complete) {
+BinTree* genRandomTree(int height, bool complete) {
     if (height < 0) {
         height = (int) std::random_device()() % 10;
     }
@@ -182,14 +186,15 @@ BinTree *genRandomTree(int height, bool complete) {
     return tree;
 }
 
-std::vector<BinTree *> genTrees() {
+std::vector<BinTree*> genTrees() {
 #define node new BinTree
-    std::vector<BinTree *> trees{
+    std::vector<BinTree*> trees{
             node(),
             node(node(), node()),
             node(node(node(), node()), node(node(), {})),
             node({}, node(node({}, node(node({}, node(node({}, node()), {})), {})), {})),  // thunderbolt
             genRandomTree(5, true),  // full tree of height 5
+            node(genRandomTree(8, true), node(node(node(node(node(), {}), {}), {}), {}))
     };
 #undef node
     return trees;

@@ -10,9 +10,9 @@
  * @brief Class to represent a binary tree
  */
 class BinTree {
-    BinTree *left;
-    BinTree *right;
-    Vertex2D *center{};
+    BinTree* left;
+    BinTree* right;
+    Vertex2D* center{};
     int offset{};
     bool threaded{};
 
@@ -24,20 +24,16 @@ class BinTree {
      */
     class Extreme {
     public:
-        BinTree *node;
+        BinTree* node;
         int offset;
         int level;
 
         Extreme() : node(nullptr), offset(-1), level(-1) {}
 
-        void update(Extreme *other) {
-            this->node = other->node;
-            this->offset = other->offset;
-            this->level = other->level;
-        }
+        Extreme(const Extreme &other) = default;
     };
 
-    Circle *circle{};
+    Circle* circle{};
     std::vector<Vertex2D> points;
 
     /**
@@ -48,7 +44,7 @@ class BinTree {
      * @param lMost Pointer to a record of the leftmost node in the right subtree
      * @param minSep Minimum horizontal distance between siblings
      */
-    static void setup(BinTree *tree, int level, Extreme *rMost, Extreme *lMost, int minSep);
+    static void setup(BinTree* tree, int level, Extreme* rMost, Extreme* lMost, int minSep);
 
     /**
      * @brief Compute the final x and y coordinates of the nodes
@@ -57,18 +53,17 @@ class BinTree {
      * @param y The y coordinate
      * @param scaleY The scaling factor for the y coordinates
      */
-    static void petrify(BinTree *tree, int x, int y, int scaleY);
+    static void petrify(BinTree* tree, int x, int y, int scaleY);
 
 public:
-    BinTree();
 
-    BinTree(BinTree *left, BinTree *right);
+    BinTree(BinTree* left = nullptr, BinTree* right = nullptr);
 
     virtual ~BinTree();
 
-    void setLeft(BinTree *left);
+    void setLeft(BinTree* left);
 
-    void setRight(BinTree *right);
+    void setRight(BinTree* right);
 
     bool draw();
 
@@ -77,7 +72,7 @@ public:
      * @param tree The root node of the tree to be rasterized
      * @return The entire set of points of the tree figure
      */
-    std::vector<Vertex2D> fillPoints(BinTree *tree);
+    std::vector<Vertex2D> fillPoints(BinTree* tree);
 };
 
 /**
@@ -86,12 +81,12 @@ public:
  * @param complete Whether to create a full binary tree (every internal node has two children)
  * @return The pointer to generated tree root node
  */
-BinTree *genRandomTree(int height = -1, bool complete = false);
+BinTree* genRandomTree(int height = -1, bool complete = false);
 
 /**
  * @brief Some predefined trees
  * @return List of trees
  */
-std::vector<BinTree *> genTrees();
+std::vector<BinTree*> genTrees();
 
 #endif //BINTREE_H
